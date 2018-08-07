@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Todo App</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+<div class="container">
+    <p>
+        <label for="new-task">Add New Task</label><input id="new-task" type="text"><button>Add</button>
+    </p>
+
+    <h3>Todo Tasks</h3>
+    <ol id="incomplete-tasks">
+        <li><input type="checkbox"><label>Learn array methods </label><input type="text"><button class="edit">Edit</button><button class="delete">Delete</button></li>
+        <li class="editMode"><input type="checkbox"><label>Learn closures</label><input type="text" value="Learn closures"><button class="edit">Edit</button><button class="delete">Delete</button></li>
+
+    </ol>
+
+    <h3>Completed</h3>
+    <ol id="completed-tasks">
+        <li><input type="checkbox" checked><label>Learn loops</label><input type="text"><button class="edit">Edit</button><button class="delete">Delete</button></li>
+    </ol>
+</div>
+
+<script type="text/javascript" src="todo.js"></script>
+
+</body>
+</html>

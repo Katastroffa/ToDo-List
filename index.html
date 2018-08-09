@@ -1,28 +1,51 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Todo App</title>
-    <link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
+    <meta charset="UTF-8">
+    <title>TODO List</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+<h1 class="head">TODO List</h1>
+<!-- create container for project -->
+
 <div class="container">
-    <p>
-        <label for="new-task">Add New Task</label><input id="new-task" type="text"><button>Add</button>
-    </p>
+    <div class="add-task">
+        <p>
+            <!--<label for="new-task">Add Item</label>--><input id="new-task" placeholder="add task" autofocus type="text"><button>Add</button>
+        </p>
+        <!--<input class="add-task__input" placeholder="add task" autofocus>-->
+    </div>
 
-    <h3>Todo Tasks</h3>
-    <ol id="incomplete-tasks">
-        <li><input type="checkbox"><label>Learn array methods </label><input type="text"><button class="edit">Edit</button><button class="delete">Delete</button></li>
-        <li class="editMode"><input type="checkbox"><label>Learn closures</label><input type="text" value="Learn closures"><button class="edit">Edit</button><button class="delete">Delete</button></li>
+    <!-- create filters for sorting  -->
+    <div class="filters">
+        <div data-filter="all" class="filters__item filters__item_selected">all</div>
+        <div data-filter="done" class="filters__item">completed</div>
+        <div data-filter="todo" class="filters__item">incompleted</div>
+    </div>
 
-    </ol>
+    <!-- create view list  -->
 
-    <h3>Completed</h3>
-    <ol id="completed-tasks">
-        <li><input type="checkbox" checked><label>Learn loops</label><input type="text"><button class="edit">Edit</button><button class="delete">Delete</button></li>
-    </ol>
+    <ul class="list">
+
+    </ul>
+
+
+    <h4>Incompleted</h4>
+    <ul id="incomplete-tasks">
+        <li><input type="checkbox"><label>Learn array methods</label><input type="text"><button class="edit">&#x270e</button><button class="delete">&#x2718</button></li>
+        <li class="editMode"><input type="checkbox"><label>Codewars Tasks</label><input type="text" value="Codewars Tasks"><button class="edit">&#x270e</button><button class="delete">&#x2718</button></li>
+
+    </ul>
+
+    <h4>Completed</h4>
+    <ul id="completed-tasks">
+        <li><input type="checkbox" checked><label>Learn loops</label><input type="text"><button class="edit">&#x270e</button><button class="delete">&#x2718</button></li>
+    </ul>
+
 </div>
 
-<script type="text/javascript" src="todo.js"></script>
+<script type="text/javascript" src="script.js"></script>
 
 </body>
 </html>

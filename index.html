@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>TODO List</title>
@@ -7,43 +7,45 @@
 </head>
 <body>
 <h1 class="head">TODO List</h1>
-<!-- create container for input -->
-
-<div class="container">
-    <div class="add-task"><input id="new-task" placeholder="add task" autofocus type="text"><button>Add</button>
-
-
+<!-- create container for project -->
+<div class="container"> <!--simple Division element-->
+    <!-- create a display for new task  -->
+    <div class="add-task">
+        <input class="add-task__input" placeholder="add task" autofocus>
     </div>
-
+    <p>
+        <button>Add</button>
+    </p>
     <!-- create filters for sorting  -->
     <div class="filters">
         <div data-filter="all" class="filters__item filters__item_selected">all</div>
         <div data-filter="done" class="filters__item">completed</div>
         <div data-filter="todo" class="filters__item">incompleted</div>
     </div>
-
     <!-- create view list  -->
-
     <ul class="list">
 
     </ul>
-
-
-    <h4>Incompleted</h4>
-    <ul id="incomplete-tasks">
-        <li><input type="checkbox"><label>Learn array methods</label><input type="text"><button class="edit">&#x270e</button><button class="delete">&#x2718</button></li>
-        <li class="editMode"><input type="checkbox"><label>Codewars Tasks</label><input type="text" value="Codewars Tasks"><button class="edit">&#x270e</button><button class="delete">&#x2718</button></li>
-
-    </ul>
-
-    <h4>Completed</h4>
-    <ul id="completed-tasks">
-        <li><input type="checkbox" checked><label>Learn loops</label><input type="text"><button class="edit">&#x270e</button><button class="delete">&#x2718</button></li>
-    </ul>
-
+    <!-- create stastistic filters  -->
+    <div class="statistic">
+        all:
+        <div class="statistic__total">3</div>
+        completed:
+        <div class="statistic__done">1</div>
+        incompleted:
+        <div class="statistic__left">2</div>
+    </div>
 </div>
-
-<script type="text/javascript" src="script.js"></script>
-
+<!-- end of container  -->
+<!--create template    -->
+<template id="todoTemplate" style="display: none">
+    <li class="list__item task">
+        <div class="task__status"></div>
+        <span class="task__name">{{TODO}}</span>
+        <div class="task__delete-button">&#x2718<div class="edit">&#x270e</div>
+    </li>
+</template>
+<!-- add js script  -->
+<script src="script.js"></script>
 </body>
 </html>

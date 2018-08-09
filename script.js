@@ -1,123 +1,205 @@
-const taskInput = document.getElementById('new-task');// Add a new task.
-const addButton = document.getElementsByTagName('button')[0];// first button
-const incompleteTaskHolder = document.getElementById('incomplete-tasks');// ul of #incomplete-tasks
-const completedTasksHolder = document.getElementById('completed-tasks');// completed-tasks
-
-// New task list item
-const createNewTaskElement = function (taskString) {
-  const listItem = document.createElement('li');
-
-  // input (checkbox)
-  const checkBox = document.createElement('input');// checkbx
-  // label
-  const label = document.createElement('label');// label
-  // input (text)
-  const editInput = document.createElement('input');// text
-  // button.edit
-  const editButton = document.createElement('button');// edit button
-
-  // button.delete
-  const deleteButton = document.createElement('button');// delete button
-
-  label.innerText = taskString;
-
-  checkBox.type = 'checkbox';
-  editInput.type = 'text';
-
-  editButton.innerText = 'Edit';// innerText encodes special characters, HTML does not.
-  editButton.className = 'edit';
-  deleteButton.innerText = 'Delete';
-  deleteButton.className = 'delete';
-  // and appending.
-  listItem.appendChild(checkBox);
-  listItem.appendChild(label);
-  listItem.appendChild(editInput);
-  listItem.appendChild(editButton);
-  listItem.appendChild(deleteButton);
-  return listItem;
+const keyCode = {
+  ENTER: 13,
 };
-
-const addTask = function () {
-  console.log('Add Task...');
-  // Create a new list item with the text from the #new-task:
-  const listItem = createNewTaskElement(taskInput.value);
-  // Append listItem to incompleteTaskHolder
-  incompleteTaskHolder.appendChild(listItem);
-  bindTaskEvents(listItem, taskCompleted);
-
-  taskInput.value = '';
+// template status
+const todoStatus = {
+  TODO: 'todo',
+  DONE: 'done',
 };
-// Edit an existing task.
-const editTask = function () {
-  console.log('Edit Task...');
-  console.log("Change 'edit' to 'save'");
+// filter
+const filter = {
+  ALL: 'all',
+  DONE: 'done',
+  TODO: 'todo',
+};
+// template list with examples
+const todoList = [
+  {
+    name: 'Learn arrays methods',
+    status: todoStatus.TODO,
+  },
+  {
+    name: 'Learn loops',
+    status: todoStatus.DONE,
+  },
+  {
+    name: 'Codewars tasks',
+    status: todoStatus.TODO,
+  },
+  {
+    name: 'Create a Todo-list',
+    status: todoStatus.TODO,
+  },
+];
 
-  const listItem = this.parentNode;
+const listElement = document.querySelector('.list');// возвращает все элементы внутри listelem, все элементы list
+const templateElement = document.getElementById('todoTemplate');// По стандарту значение id должно быть уникально, возвращаем template
+const templateContainer = 'content' in templateElement ? templateElement.content : templateElement;
+const inputElement = document.querySelector('.add-task__input');
+const filterElement = document.querySelector('.filters');
+let currentFilter = filter.ALL;
 
-  const editInput = listItem.querySelector('input[type=text]');
-  const label = listItem.querySelector('label');
-  const containsClass = listItem.classList.contains('editMode');
-  // If class of the parent is .editmode
-  if (containsClass) {
-    // switch to .editmode
-    // label becomes the inputs value.
-    label.innerText = editInput.value;
-  } else {
-    editInput.value = label.innerText;
+const statsAllElement = document.querySelector('.statistic__total');
+const statsDoneElement = document.querySelector('.statistic__done');
+const statsTodoElement = document.querySelector('.statistic__left');
+
+function getTodoElement({ name, status }) {
+  const newElement = templateContainer.querySelector('.task').cloneNode(true);
+  const nameElement = newElement.querySelector('.task__name');
+
+  nameElement.textContent = name;
+  newElement.dataset.name = name;
+  setStatus(newElement, status);
+
+  return newElement;
+}
+
+function renderList(todos = []) {
+  listElement.innerHTML = '';// очистим список
+
+  const fragment = document.createDocumentFragment();
+
+  todos.forEach((todo) => {
+    fragment.appendChild(getTodoElement(todo));
+  });
+
+  listElement.appendChild(fragment);
+}
+
+function setStatus(todoElement, status) {
+  const isTodo = status === todoStatus.TODO;
+
+  todoElement.classList.toggle('task_todo', isTodo);
+  todoElement.classList.toggle('task_done', !isTodo);
+}
+
+function changeStatus(todoElement) {
+  const index = getTodoIndexByName(todoElement.dataset.name);
+  const todo = todoList[index];
+  const isTodo = todo.status === todoStatus.TODO;
+  const newStatus = isTodo ? todoStatus.DONE : todoStatus.TODO;
+
+  todo.status = newStatus;
+}
+
+function checkTodo(todoElement) {
+  return todoElement.classList.contains('task_todo');
+}
+
+function checkStatusBtn(element) {
+  return element.classList.contains('task__status');
+}
+
+function checkDeleteBtn(element) {
+  return element.classList.contains('task__delete-button');
+}
+
+function deleteTodo(element) {
+  const index = getTodoIndexByName(element.dataset.name);
+
+  todoList.splice(index, 1);
+}
+
+function onListClick(event) {
+  const { target } = event;
+
+  if (checkStatusBtn(target)) {
+    changeStatus(target.parentElement);
+    renderFilteredList();
+    return;
   }
-  // toggle .editmode on the parent.
-  listItem.classList.toggle('editMode');
-};
-// Delete task.
-const deleteTask = function () {
-  console.log('Delete Task...');
 
-  const listItem = this.parentNode;
-  const ul = listItem.parentNode;
-  // Remove the parent list item from the ul.
-  ul.removeChild(listItem);
-};
-// Mark task completed
-let taskCompleted = function () {
-  console.log('Complete Task...');
-
-  const listItem = this.parentNode;
-  completedTasksHolder.appendChild(listItem);
-  bindTaskEvents(listItem, taskIncomplete);
-};
-
-
-let taskIncomplete = function () {
-  console.log('Incomplete Task...');
-
-  const listItem = this.parentNode;
-  incompleteTaskHolder.appendChild(listItem);
-  bindTaskEvents(listItem, taskCompleted);
-};
-
-const ajaxRequest = function () {
-  console.log('AJAX Request');
-};
-
-addButton.onclick = addTask;
-addButton.addEventListener('click', addTask);
-addButton.addEventListener('click', ajaxRequest);
-
-let bindTaskEvents = function (taskListItem, checkBoxEventHandler) {
-  console.log('bind list item events');
-
-  const checkBox = taskListItem.querySelector('input[type=checkbox]');
-  const editButton = taskListItem.querySelector('button.edit');
-  const deleteButton = taskListItem.querySelector('button.delete');
-
-  editButton.onclick = editTask;
-  deleteButton.onclick = deleteTask;
-  checkBox.onchange = checkBoxEventHandler;
-};
-
-for (let i = 0; i < incompleteTaskHolder.children.length; i++) {
-  bindTaskEvents(incompleteTaskHolder.children[i], taskCompleted);
+  if (checkDeleteBtn(target)) {
+    deleteTodo(target.parentElement);
+    renderFilteredList();
+  }
 }
-for (let i = 0; i < completedTasksHolder.children.length; i++) {
-  bindTaskEvents(completedTasksHolder.children[i], taskIncomplete);
+
+function getTodoIndexByName(search) {
+  for (let i = 0; i < todoList.length; i++) {
+    if (todoList[i].name === search) {
+      return i;
+    }
+  }
 }
+
+function onInputKeydown(event) {
+  if (event.keyCode !== keyCode.ENTER) {
+    return;
+  }
+
+  if (!inputElement.value) {
+    return;
+  }
+
+  const newName = inputElement.value;
+
+  if (checkTodoExists(newName)) {
+    return;
+  }
+
+  addNewTodo(newName);
+  inputElement.value = '';
+}
+
+function checkTodoExists(newName) {
+  const elements = listElement.querySelectorAll('.task__name');
+  const names = [...elements].map(element => element.textContent);
+
+  return names.indexOf(newName) !== -1;
+}
+
+// function checkTodoExists(newName) {
+//     return todoList.some(({name}) => name === newName);
+// }
+
+function addNewTodo(name) {
+  const todo = {
+    name,
+    status: todoStatus.TODO,
+  };
+
+  todoList.unshift(todo);
+  renderFilteredList();
+}
+
+function onFiltersClick({ target }) {
+  const newFilter = target.dataset.filter;
+
+  if (!newFilter || newFilter === currentFilter) {
+    return;
+  }
+
+  currentFilter = newFilter;
+  filterElement.querySelector('.filters__item_selected').classList.remove('filters__item_selected');
+  target.classList.add('filters__item_selected');
+
+  renderFilteredList();
+}
+
+function renderFilteredList() {
+  let todos;
+
+  if (currentFilter === filter.ALL) {
+    todos = todoList.slice();
+  } else {
+    const filterStatus = currentFilter === filter.TODO ? todoStatus.TODO : todoStatus.DONE;
+
+    todos = todoList.filter(({ status }) => status === filterStatus);
+  }
+  renderList(todos);
+  updateStats();
+}
+function updateStats() {
+  const total = todoList.length;
+  const done = todoList.filter(({ status }) => status === todoStatus.DONE).length;
+
+  statsAllElement.textContent = total;
+  statsDoneElement.textContent = done;
+  statsTodoElement.textContent = total - done;
+}
+// Исполняемый код
+listElement.addEventListener('click', onListClick);
+inputElement.addEventListener('keydown', onInputKeydown);
+filterElement.addEventListener('click', onFiltersClick);
+renderFilteredList();

@@ -3,17 +3,17 @@ const keyCode = {
 };
 // template status
 const todoStatus = {
-  TODO: 'todo',
-  DONE: 'done',
+  TODO: 'false',
+  DONE: 'true',
 };
 // filter
 const filter = {
   ALL: 'all',
-  DONE: 'done',
-  TODO: 'todo',
+  DONE: 'true',
+  TODO: 'false',
 };
 // template list with examples
-const todoList = [
+let todoList = [
   {
     name: 'Learn arrays methods',
     status: todoStatus.TODO,
@@ -28,6 +28,10 @@ const todoList = [
   },
   {
     name: 'Create a Todo-list',
+    status: todoStatus.TODO,
+  },
+  {
+    name: 'Sone Title',
     status: todoStatus.TODO,
   },
 ];
@@ -187,9 +191,11 @@ function renderFilteredList() {
 
     todos = todoList.filter(({ status }) => status === filterStatus);
   }
+
   renderList(todos);
   updateStats();
 }
+
 function updateStats() {
   const total = todoList.length;
   const done = todoList.filter(({ status }) => status === todoStatus.DONE).length;
@@ -198,6 +204,35 @@ function updateStats() {
   statsDoneElement.textContent = done;
   statsTodoElement.textContent = total - done;
 }
+
+function loadTodo() {
+  const xhr = new XMLHttpRequest();
+  const url = 'https://jsonplaceholder.typicode.com/todos';
+  xhr.open('GET', url, true);
+  xhr.send();
+
+  let todos = [];
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      todos = JSON.parse(xhr.responseText).map(el => ({
+        ...el,
+        //done: el.completed
+        name: el.title,
+      }));
+
+      todoList = [
+        ...todoList,
+        ...todos,
+      ];
+
+      renderList();
+      renderFilteredList();
+      console.log(todos);
+    }
+  };
+}
+
+
 // Исполняемый код
 listElement.addEventListener('click', onListClick);
 inputElement.addEventListener('keydown', onInputKeydown);

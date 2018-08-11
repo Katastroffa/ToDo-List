@@ -153,10 +153,6 @@ function checkTodoExists(newName) {
   return names.indexOf(newName) !== -1;
 }
 
-// function checkTodoExists(newName) {
-//     return todoList.some(({name}) => name === newName);
-// }
-
 function addNewTodo(name) {
   const todo = {
     name,
